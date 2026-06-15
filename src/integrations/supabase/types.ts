@@ -53,6 +53,62 @@ export type Database = {
         }
         Relationships: []
       }
+      career_experiences: {
+        Row: {
+          career_slug: string
+          career_title: string
+          created_at: string
+          enjoyment: number
+          feedback: Json
+          id: string
+          instructions: string
+          recommendation_id: string | null
+          response: string
+          scenario: string
+          task_title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          career_slug: string
+          career_title: string
+          created_at?: string
+          enjoyment: number
+          feedback?: Json
+          id?: string
+          instructions: string
+          recommendation_id?: string | null
+          response: string
+          scenario: string
+          task_title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          career_slug?: string
+          career_title?: string
+          created_at?: string
+          enjoyment?: number
+          feedback?: Json
+          id?: string
+          instructions?: string
+          recommendation_id?: string | null
+          response?: string
+          scenario?: string
+          task_title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "career_experiences_recommendation_id_fkey"
+            columns: ["recommendation_id"]
+            isOneToOne: false
+            referencedRelation: "career_recommendations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       career_recommendations: {
         Row: {
           assessment_id: string
