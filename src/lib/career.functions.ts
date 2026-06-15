@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { generateText, Output } from "ai";
+import { generateText, NoObjectGeneratedError, Output } from "ai";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { calculateScores } from "@/lib/assessment";
@@ -25,6 +25,8 @@ const AnalysisSchema = z.object({
   recommendations: z.array(RecommendationSchema).length(3),
   roadmap: z.array(z.object({ title: z.string(), description: z.string(), category: z.enum(["academic", "skill", "experience", "application"]), timeframe: z.string() })).min(4).max(6),
 });
+
+const ANALYSIS_INSTRUCTIONS = `Return a career analysis matching the supplied schema exactly. Include exactly 3 recommendations and 4 to 6 roadmap steps. Confidence must be a number from 0 to 100. Every roadmap category must be one of: academic, skill, experience, application. Do not omit any field. Use empty arrays rather than omitting array fields.`;
 
 export const getDashboard = createServerFn({ method: "GET" }).middleware([requireSupabaseAuth]).handler(async ({ context }) => {
   const [profileResult, assessmentResult] = await Promise.all([
@@ -74,13 +76,36 @@ export const analyseAssessment = createServerFn({ method: "POST" }).middleware([
   if (!apiKey) throw new Error("Career analysis is temporarily unavailable.");
   const { createCareerAiProvider } = await import("@/lib/ai-gateway.server");
   const gateway = createCareerAiProvider(apiKey);
-  const result = await generateText({
-    model: gateway("google/gemini-3-flash-preview"),
-    output: Output.object({ schema: AnalysisSchema }),
-    prompt: `You are an ethical career counsellor for secondary school students. Generate exactly 3 diverse, realistic and explainable career recommendations. Never imply certainty; confidence is profile fit, not predicted success. Use concise, supportive language. Ground every match reason in the supplied profile and RIASEC scores. Include current but non-numeric job outlook language, pathways, related roles, degree majors, school subjects, technical and soft skills, and concrete preparation experiences. Build a staged roadmap suitable for the student's education level.\n\nStudent profile: ${JSON.stringify(profile)}\nRIASEC scores (0-100): ${JSON.stringify(assessment.scores)}`,
-  });
-  const output = result.output;
-  if (!output) throw new Error("The analysis did not return a usable result. Please try again.");
+   const model = gateway("google/gemini-3-flash-preview");
+   const prompt = `You are an ethical career counsellor for secondary school students. Generate diverse, realistic and explainable career recommendations. Never imply certainty; confidence is profile fit, not predicted success. Use concise, supportive language. Ground every match reason in the supplied profile and RIASEC scores. Include current but non-numeric job outlook language, pathways, related roles, degree majors, school subjects, technical and soft skills, and concrete preparation experiences. Build a staged roadmap suitable for the student's education level.\n\n${ANALYSIS_INSTRUCTIONS}\n\nStudent profile: ${JSON.stringify(profile)}\nRIASEC scores (0-100): ${JSON.stringify(assessment.scores)}`;
+   let output: z.infer<typeof AnalysisSchema>;
+   try {
+     const result = await generateText({
+       model,
+       output: Output.object({ schema: AnalysisSchema, name: "career_analysis", description: ANALYSIS_INSTRUCTIONS }),
+       prompt,
+     });
+     output = result.output;
+   } catch (error) {
+     if (!NoObjectGeneratedError.isInstance(error)) throw error;
+     if (error.finishReason === "length") {
+       console.warn("Career analysis was truncated before schema validation completed.");
+       return { ok: false, error: "The career analysis was too long to complete. Please try again." };
+     }
+
+     console.warn("Career analysis failed schema validation; attempting one structured repair.", error.cause);
+     try {
+       const repaired = await generateText({
+         model,
+         output: Output.object({ schema: AnalysisSchema, name: "career_analysis", description: ANALYSIS_INSTRUCTIONS }),
+         prompt: `Correct the draft below so it matches the required schema exactly. Preserve useful content, add any missing fields, use exactly 3 recommendations and 4 to 6 roadmap steps, and return only the corrected structured result.\n\n${ANALYSIS_INSTRUCTIONS}\n\nDraft:\n${error.text ?? "No usable draft was returned; generate the analysis again from the original request."}\n\nOriginal request:\n${prompt}`,
+       });
+       output = repaired.output;
+     } catch (repairError) {
+       console.error("Career analysis schema repair failed.", repairError);
+       return { ok: false, error: "We couldn't format your career analysis correctly. Your answers are saved—please try again." };
+     }
+   }
   await context.supabase.from("career_recommendations").delete().eq("assessment_id", assessment.id).eq("user_id", context.userId);
   await context.supabase.from("development_plans").delete().eq("assessment_id", assessment.id).eq("user_id", context.userId);
   const recommendations = output.recommendations.map((item, index) => ({
@@ -94,7 +119,7 @@ export const analyseAssessment = createServerFn({ method: "POST" }).middleware([
   if (planError) throw planError;
   const { error: completeError } = await context.supabase.from("assessment_sessions").update({ status: "completed", completed_at: new Date().toISOString() }).eq("id", assessment.id);
   if (completeError) throw completeError;
-  return { ok: true };
+   return { ok: true, error: null };
 });
 
 export const togglePlanStep = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator((input: unknown) => z.object({ id: z.string().uuid(), completed: z.boolean() }).parse(input)).handler(async ({ data, context }) => {
