@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { generateText, Output } from "ai";
 import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { calculateScores } from "@/lib/assessment";
 
 const ResponsesSchema = z.record(z.string(), z.number().int().min(1).max(5));
@@ -25,7 +26,7 @@ const AnalysisSchema = z.object({
   roadmap: z.array(z.object({ title: z.string(), description: z.string(), category: z.enum(["academic", "skill", "experience", "application"]), timeframe: z.string() })).min(4).max(6),
 });
 
-export const getDashboard = createServerFn({ method: "GET" }).handler(async ({ context }) => {
+export const getDashboard = createServerFn({ method: "GET" }).middleware([requireSupabaseAuth]).handler(async ({ context }) => {
   const [profileResult, assessmentResult] = await Promise.all([
     context.supabase.from("profiles").select("*").eq("id", context.userId).maybeSingle(),
     context.supabase.from("assessment_sessions").select("*").eq("user_id", context.userId).order("created_at", { ascending: false }).limit(1).maybeSingle(),
@@ -43,13 +44,13 @@ export const getDashboard = createServerFn({ method: "GET" }).handler(async ({ c
   return { profile: profileResult.data, assessment, recommendations: recommendationsResult.data, plan: planResult.data };
 });
 
-export const saveProfile = createServerFn({ method: "POST" }).inputValidator((input: unknown) => ProfileSchema.parse(input)).handler(async ({ data, context }) => {
+export const saveProfile = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator((input: unknown) => ProfileSchema.parse(input)).handler(async ({ data, context }) => {
   const { error } = await context.supabase.from("profiles").upsert({ id: context.userId, display_name: data.displayName, school_year: data.schoolYear, country: data.country, educational_stage: data.educationalStage, current_subjects: data.currentSubjects });
   if (error) throw error;
   return { ok: true };
 });
 
-export const saveAssessment = createServerFn({ method: "POST" }).inputValidator((input: unknown) => SaveAssessmentSchema.parse(input)).handler(async ({ data, context }) => {
+export const saveAssessment = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator((input: unknown) => SaveAssessmentSchema.parse(input)).handler(async ({ data, context }) => {
   const payload = { user_id: context.userId, responses: data.responses, scores: calculateScores(data.responses), progress: data.progress };
   if (data.id) {
     const { error } = await context.supabase.from("assessment_sessions").update(payload).eq("id", data.id).eq("user_id", context.userId);
@@ -61,7 +62,7 @@ export const saveAssessment = createServerFn({ method: "POST" }).inputValidator(
   return created;
 });
 
-export const analyseAssessment = createServerFn({ method: "POST" }).inputValidator((input: unknown) => z.object({ assessmentId: z.string().uuid() }).parse(input)).handler(async ({ data, context }) => {
+export const analyseAssessment = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator((input: unknown) => z.object({ assessmentId: z.string().uuid() }).parse(input)).handler(async ({ data, context }) => {
   const [{ data: assessment, error: assessmentError }, { data: profile, error: profileError }] = await Promise.all([
     context.supabase.from("assessment_sessions").select("*").eq("id", data.assessmentId).eq("user_id", context.userId).single(),
     context.supabase.from("profiles").select("*").eq("id", context.userId).single(),
@@ -96,7 +97,7 @@ export const analyseAssessment = createServerFn({ method: "POST" }).inputValidat
   return { ok: true };
 });
 
-export const togglePlanStep = createServerFn({ method: "POST" }).inputValidator((input: unknown) => z.object({ id: z.string().uuid(), completed: z.boolean() }).parse(input)).handler(async ({ data, context }) => {
+export const togglePlanStep = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator((input: unknown) => z.object({ id: z.string().uuid(), completed: z.boolean() }).parse(input)).handler(async ({ data, context }) => {
   const { error } = await context.supabase.from("development_plans").update({ completed: data.completed }).eq("id", data.id).eq("user_id", context.userId);
   if (error) throw error;
   return { ok: true };
