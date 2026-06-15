@@ -2,10 +2,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, ArrowRight, BarChart3, BookOpen, BriefcaseBusiness, Building2, Clock3, ExternalLink, GraduationCap, Scale, Sparkles, TrendingUp, TriangleAlert, WalletCards } from "lucide-react";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { AppNav } from "@/components/app-nav";
 import { LoadingView } from "@/components/loading-view";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { generateRealityReports, getRealityChecker } from "@/lib/reality.functions";
 
 export const Route = createFileRoute("/_authenticated/reality-checker")({
@@ -92,7 +93,7 @@ function Preference<T extends string>({ label, value, options, onChange }: { lab
 
 function Comparison({ reports, sources }: { reports: { row: { data_as_of: string }; reality: Reality }[]; sources: { title: string; publisher: string; url: string }[] }) {
   return <section className="mt-14"><div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">Side-by-side comparison</p><h2 className="mt-2 text-3xl font-extrabold tracking-tight">Three paths. The realities behind each.</h2></div><div className="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-muted-foreground"><span className="flex items-center gap-2"><span className="size-2 rounded-full bg-primary" />Objective data</span><span className="flex items-center gap-2"><Sparkles className="size-3 text-primary" />AI insight</span></div></div>
-    <div className="mt-8 overflow-x-auto pb-4"><div className="grid min-w-[930px] grid-cols-3 gap-4">{reports.map(({ row, reality }) => <article key={reality.careerTitle} className="overflow-hidden rounded-xl border border-border bg-card"><div className="border-b border-border p-6"><div className="flex items-start justify-between gap-4"><div><p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Lifestyle alignment</p><h3 className="mt-2 text-2xl font-extrabold">{reality.careerTitle}</h3></div><span className="grid size-14 shrink-0 place-items-center rounded-full border-4 border-primary/20 font-mono text-sm font-bold text-primary">{reality.fitScore}</span></div><div className="mt-4 h-1.5 overflow-hidden rounded-full bg-secondary"><div className="h-full rounded-full bg-primary" style={{ width: `${reality.fitScore}%` }} /></div></div>
+    <div className="mt-8 overflow-x-auto pb-4"><div className="grid min-w-[930px] grid-cols-3 gap-4">{reports.map(({ row, reality }) => <article key={reality.careerTitle} className="overflow-hidden rounded-xl border border-border bg-card"><div className="border-b border-border p-6"><div className="flex items-start justify-between gap-4"><div><p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Lifestyle alignment</p><h3 className="mt-2 text-2xl font-extrabold">{reality.careerTitle}</h3></div><span className="grid size-14 shrink-0 place-items-center rounded-full border-4 border-primary/20 font-mono text-sm font-bold text-primary">{reality.fitScore}</span></div><Progress value={reality.fitScore} className="mt-4 h-1.5 bg-secondary" /></div>
           <div className="space-y-0 divide-y divide-border"><RealityBlock icon={WalletCards} title="Salary range"><div className="grid grid-cols-3 gap-2">{[["Entry", reality.salary.entry], ["Mid", reality.salary.mid], ["Senior", reality.salary.senior]].map(([label, value]) => <div key={label}><p className="font-mono text-[9px] uppercase text-muted-foreground">{label}</p><p className="mt-1 text-xs font-bold">{value}</p></div>)}</div><p className="mt-3 text-[11px] leading-5 text-muted-foreground">{reality.salary.currency} · {reality.salary.period}. {reality.salary.note}</p></RealityBlock>
             <RealityBlock icon={GraduationCap} title={`Education · ${reality.education.years}`}><List items={reality.education.requirements} /><TagList items={reality.majors} /></RealityBlock>
             <RealityBlock icon={Building2} title="Work environment"><TagList items={reality.environments} /></RealityBlock>
@@ -106,7 +107,7 @@ function Comparison({ reports, sources }: { reports: { row: { data_as_of: string
   </section>;
 }
 
-function RealityBlock({ icon: Icon, title, children }: { icon: typeof BriefcaseBusiness; title: string; children: React.ReactNode }) { return <section className="p-6"><h4 className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground"><Icon className="size-4 text-primary" />{title}</h4><div className="mt-4">{children}</div></section>; }
+function RealityBlock({ icon: Icon, title, children }: { icon: typeof BriefcaseBusiness; title: string; children: ReactNode }) { return <section className="p-6"><h4 className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground"><Icon className="size-4 text-primary" />{title}</h4><div className="mt-4">{children}</div></section>; }
 function List({ items }: { items: string[] }) { return <ul className="space-y-2">{items.map((item) => <li key={item} className="flex gap-2 text-xs leading-5"><span className="mt-2 size-1 shrink-0 rounded-full bg-primary" />{item}</li>)}</ul>; }
 function TagList({ items }: { items: string[] }) { return <div className="mt-4 flex flex-wrap gap-2">{items.map((item) => <span key={item} className="rounded-full bg-secondary px-2.5 py-1 text-[10px] font-semibold">{item}</span>)}</div>; }
 function Fact({ label, value }: { label: string; value: string }) { return <div className="mb-3 last:mb-0"><p className="font-mono text-[9px] uppercase text-muted-foreground">{label}</p><p className="mt-1 text-xs leading-5">{value}</p></div>; }
