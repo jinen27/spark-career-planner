@@ -14,7 +14,218 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      assessment_sessions: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          progress: number
+          responses: Json
+          scores: Json
+          status: string
+          updated_at: string
+          user_id: string
+          version: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          progress?: number
+          responses?: Json
+          scores?: Json
+          status?: string
+          updated_at?: string
+          user_id: string
+          version?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          progress?: number
+          responses?: Json
+          scores?: Json
+          status?: string
+          updated_at?: string
+          user_id?: string
+          version?: string
+        }
+        Relationships: []
+      }
+      career_recommendations: {
+        Row: {
+          assessment_id: string
+          career_slug: string
+          career_title: string
+          confidence: number
+          created_at: string
+          description: string
+          id: string
+          match_reasons: Json
+          outlook: string
+          pathways: Json
+          preparation_experiences: Json
+          rank: number
+          recommended_subjects: Json
+          related_professions: Json
+          responsibilities: Json
+          soft_skills: Json
+          technical_skills: Json
+          university_majors: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assessment_id: string
+          career_slug: string
+          career_title: string
+          confidence: number
+          created_at?: string
+          description: string
+          id?: string
+          match_reasons?: Json
+          outlook?: string
+          pathways?: Json
+          preparation_experiences?: Json
+          rank: number
+          recommended_subjects?: Json
+          related_professions?: Json
+          responsibilities?: Json
+          soft_skills?: Json
+          technical_skills?: Json
+          university_majors?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assessment_id?: string
+          career_slug?: string
+          career_title?: string
+          confidence?: number
+          created_at?: string
+          description?: string
+          id?: string
+          match_reasons?: Json
+          outlook?: string
+          pathways?: Json
+          preparation_experiences?: Json
+          rank?: number
+          recommended_subjects?: Json
+          related_professions?: Json
+          responsibilities?: Json
+          soft_skills?: Json
+          technical_skills?: Json
+          university_majors?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "career_recommendations_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessment_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      development_plans: {
+        Row: {
+          assessment_id: string
+          category: string
+          completed: boolean
+          created_at: string
+          description: string
+          id: string
+          recommendation_id: string | null
+          sequence: number
+          timeframe: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assessment_id: string
+          category: string
+          completed?: boolean
+          created_at?: string
+          description: string
+          id?: string
+          recommendation_id?: string | null
+          sequence: number
+          timeframe: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assessment_id?: string
+          category?: string
+          completed?: boolean
+          created_at?: string
+          description?: string
+          id?: string
+          recommendation_id?: string | null
+          sequence?: number
+          timeframe?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "development_plans_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessment_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "development_plans_recommendation_id_fkey"
+            columns: ["recommendation_id"]
+            isOneToOne: false
+            referencedRelation: "career_recommendations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          country: string
+          created_at: string
+          current_subjects: string[]
+          display_name: string
+          educational_stage: string
+          id: string
+          preferences: Json
+          school_year: string
+          updated_at: string
+        }
+        Insert: {
+          country?: string
+          created_at?: string
+          current_subjects?: string[]
+          display_name?: string
+          educational_stage?: string
+          id: string
+          preferences?: Json
+          school_year?: string
+          updated_at?: string
+        }
+        Update: {
+          country?: string
+          created_at?: string
+          current_subjects?: string[]
+          display_name?: string
+          educational_stage?: string
+          id?: string
+          preferences?: Json
+          school_year?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
