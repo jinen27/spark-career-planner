@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Menu, SignOut, X } from "lucide-react";
+import { LogOut, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,10 +20,10 @@ export function AppNav({ initials = "ST" }: { initials?: string }) {
         <div className="hidden gap-6 text-sm font-medium text-muted-foreground md:flex">{links.map((link) => <Link key={link.to} to={link.to} activeProps={{ className: "text-foreground" }} className="transition-colors hover:text-foreground">{link.label}</Link>)}</div>
       </div>
       <div className="flex shrink-0 items-center gap-2"><div className="grid size-8 place-items-center rounded-full border border-primary/20 bg-primary/10 text-[10px] font-bold text-primary">{initials}</div>
-        <Button variant="ghost" size="icon" className="hidden md:inline-flex" onClick={signOut} aria-label="Sign out"><SignOut /></Button>
+        <Button variant="ghost" size="icon" className="hidden md:inline-flex" onClick={signOut} aria-label="Sign out"><LogOut /></Button>
         <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setOpen(!open)} aria-label="Toggle navigation">{open ? <X /> : <Menu />}</Button>
       </div>
     </div>
-    {open && <div className="border-t border-border bg-background px-5 py-4 md:hidden">{links.map((link) => <Link key={link.to} to={link.to} onClick={() => setOpen(false)} className="block py-3 text-sm font-semibold">{link.label}</Link>)}<Button variant="ghost" className="mt-2 w-full justify-start" onClick={signOut}><SignOut /> Sign out</Button></div>}
+    {open && <div className="border-t border-border bg-background px-5 py-4 md:hidden">{links.map((link) => <Link key={link.to} to={link.to} onClick={() => setOpen(false)} className="block py-3 text-sm font-semibold">{link.label}</Link>)}<Button variant="ghost" className="mt-2 w-full justify-start" onClick={signOut}><LogOut /> Sign out</Button></div>}
   </nav>;
 }
