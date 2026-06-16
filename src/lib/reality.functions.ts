@@ -7,6 +7,7 @@ const PreferencesSchema = z.object({
   salaryPriority: z.enum(["low", "medium", "high"]),
   balancePriority: z.enum(["low", "medium", "high"]),
   studyTolerance: z.enum(["short", "moderate", "long"]),
+  stressTolerance: z.enum(["low", "medium", "high"]),
   environment: z.enum(["flexible", "office", "remote", "field", "laboratory", "hospital", "travel", "no_preference"]),
 });
 
@@ -17,7 +18,22 @@ const RealitySchema = z.object({
   majors: z.array(z.string()).min(1).max(5),
   environments: z.array(z.string()).min(1).max(5),
   conditions: z.object({ hours: z.string(), balance: z.string(), flexibility: z.string() }),
+  stress: z.object({
+    level: z.enum(["low", "moderate", "high", "very_high"]),
+    summary: z.string(),
+    factors: z.array(z.string()).min(2).max(5),
+  }),
   outlook: z.object({ rating: z.enum(["limited", "steady", "strong"]), summary: z.string(), opportunities: z.array(z.string()).min(1).max(4) }),
+  demand: z.object({
+    current: z.enum(["low", "moderate", "high", "very_high"]),
+    fiveYear: z.enum(["declining", "stable", "growing", "rapidly_growing"]),
+    growthNote: z.string(),
+    drivers: z.array(z.string()).min(2).max(5),
+  }),
+  regions: z.array(z.object({
+    name: z.string(),
+    reason: z.string(),
+  })).min(3).max(6),
   challenges: z.array(z.string()).min(2).max(5),
   progression: z.array(z.string()).min(3).max(6),
   fitScore: z.number().int().min(0).max(100),
@@ -90,8 +106,22 @@ export const generateRealityReports = createServerFn({ method: "POST" })
     try {
       const { output } = await generateText({
         model: gateway("google/gemini-3-flash-preview"),
-        output: Output.object({ schema: RealityOutputSchema, name: "career_reality_comparison", description: "A three-career reality comparison grounded in supplied official labour-market portals." }),
-        prompt: `You are an ethical career information analyst for students. Produce exactly one reality report for each of the three supplied careers, in the same order. Separate objective career facts from personalised interpretation: salary, education, majors, environments, conditions, outlook, challenges, and progression are objective synthesis; fitScore, personalisedInsight, and tradeoff are AI interpretation. Use cautious ranges, never false precision, and never promise earnings or employment. Salary values must be gross annual ranges where the supplied official source supports them; otherwise give a clearly labelled broad estimate and explain limitations in salary.note. Tailor to the student's country. Ground the objective synthesis only in the official labour-market portals supplied below and the existing recommendation context. Do not invent studies, citations, or URLs. Keep every field concise and student-friendly. Fit score means lifestyle alignment, not likelihood of success.
+        output: Output.object({ schema: RealityOutputSchema, name: "career_reality_comparison", description: "A three-career reality comparison covering salary, study, stress, demand, geography, and personalised lifestyle fit." }),
+        prompt: `You are an ethical career information analyst for students. Produce exactly one reality report for each of the three supplied careers, in the same order.
+
+Separate objective career facts from personalised interpretation:
+- Objective synthesis (cautious, source-grounded): salary, education, majors, environments, conditions, stress, outlook, demand, regions, challenges, progression.
+- AI interpretation (clearly opinion): fitScore, personalisedInsight, tradeoff.
+
+Rules:
+- Cautious ranges, never false precision. Never promise earnings or employment.
+- Salary values are gross annual ranges in the student's country where the official source supports them; otherwise broad estimate with limitations explained in salary.note.
+- stress.level uses Low / Moderate / High / Very high based on typical hours, responsibility, emotional/physical demand, deadlines, competitive pressure.
+- demand.current and demand.fiveYear reflect the student's country; growthNote is a short plain-English projection over the next 5–10 years. drivers explain why (tech, demographics, regulation, etc.).
+- regions: list 3–6 countries or regions globally where the career currently shows strong demand or talent shortages, with one short reason per region.
+- Ground objective sections only in the official portals supplied below and the existing recommendation context. Do not invent studies, citations, or URLs.
+- Keep every field concise and student-friendly. Fit score = lifestyle alignment with stated preferences, not likelihood of success.
+- Personalise commentary to the student's stated preferences (salary, balance, study tolerance, stress tolerance, environment). When a recommendation conflicts with a strong preference, name a gentler adjacent path in the tradeoff field.
 
 Student: ${JSON.stringify({ country: profile.country, educationalStage: profile.educational_stage, subjects: profile.current_subjects, preferences: data.preferences, interestScores: assessment?.scores ?? {} })}
 Careers: ${JSON.stringify(recommendations)}
