@@ -70,7 +70,12 @@ const fiveYearMeta: Record<FiveYear, { label: string; arrow: string; tone: strin
 const pretty = (value: string) => value.replaceAll("_", " ").replace(/^./, (letter) => letter.toUpperCase());
 
 function asReality(value: unknown): Reality | null {
-  if (!value || typeof value !== "object" || !("careerTitle" in value)) return null;
+  if (!value || typeof value !== "object") return null;
+  const v = value as Record<string, unknown>;
+  if (!v.careerTitle || !v.stress || !v.demand || !v.regions || !v.salary || !v.education || !v.outlook) return null;
+  const stress = v.stress as Record<string, unknown>;
+  const demand = v.demand as Record<string, unknown>;
+  if (!stress.level || !demand.current || !demand.fiveYear) return null;
   return value as Reality;
 }
 function asPreferences(value: unknown): Preferences {
