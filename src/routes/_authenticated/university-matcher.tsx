@@ -50,6 +50,7 @@ function UniversityMatcherPage() {
   const [gcses, setGcses] = useState("");
   const [ibTotal, setIbTotal] = useState("");
   const [ibHL, setIbHL] = useState<SubjectGrade[]>([emptySubject(), emptySubject(), emptySubject()]);
+  const [ibSL, setIbSL] = useState<SubjectGrade[]>([emptySubject(), emptySubject(), emptySubject()]);
   const [gpaScale, setGpaScale] = useState("4.0");
   const [gpaCurrent, setGpaCurrent] = useState("");
   const [testScores, setTestScores] = useState("");
@@ -80,7 +81,7 @@ function UniversityMatcherPage() {
       const academic = system === "a_levels"
         ? { system, aLevels: { predicted: clean(aPredicted), gcses: gcses.trim() || undefined } }
         : system === "ib"
-        ? { system, ib: { totalPoints: ibTotal.trim() || undefined, higherLevel: clean(ibHL) } }
+        ? { system, ib: { totalPoints: ibTotal.trim() || undefined, higherLevel: clean(ibHL), standardLevel: clean(ibSL) } }
         : { system, gpa: { scale: gpaScale, current: gpaCurrent.trim() || undefined, testScores: testScores.trim() || undefined } };
       const preferences = {
         countries,
