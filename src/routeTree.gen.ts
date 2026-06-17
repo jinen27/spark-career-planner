@@ -13,6 +13,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedUniversityMatcherRouteImport } from './routes/_authenticated/university-matcher'
 import { Route as AuthenticatedRealityCheckerRouteImport } from './routes/_authenticated/reality-checker'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedExplorerRouteImport } from './routes/_authenticated/explorer'
@@ -38,6 +39,12 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedUniversityMatcherRoute =
+  AuthenticatedUniversityMatcherRouteImport.update({
+    id: '/university-matcher',
+    path: '/university-matcher',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedRealityCheckerRoute =
   AuthenticatedRealityCheckerRouteImport.update({
     id: '/reality-checker',
@@ -74,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/explorer': typeof AuthenticatedExplorerRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/reality-checker': typeof AuthenticatedRealityCheckerRoute
+  '/university-matcher': typeof AuthenticatedUniversityMatcherRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -84,6 +92,7 @@ export interface FileRoutesByTo {
   '/explorer': typeof AuthenticatedExplorerRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/reality-checker': typeof AuthenticatedRealityCheckerRoute
+  '/university-matcher': typeof AuthenticatedUniversityMatcherRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -96,6 +105,7 @@ export interface FileRoutesById {
   '/_authenticated/explorer': typeof AuthenticatedExplorerRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/reality-checker': typeof AuthenticatedRealityCheckerRoute
+  '/_authenticated/university-matcher': typeof AuthenticatedUniversityMatcherRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/explorer'
     | '/profile'
     | '/reality-checker'
+    | '/university-matcher'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/explorer'
     | '/profile'
     | '/reality-checker'
+    | '/university-matcher'
   id:
     | '__root__'
     | '/'
@@ -129,6 +141,7 @@ export interface FileRouteTypes {
     | '/_authenticated/explorer'
     | '/_authenticated/profile'
     | '/_authenticated/reality-checker'
+    | '/_authenticated/university-matcher'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -167,6 +180,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/university-matcher': {
+      id: '/_authenticated/university-matcher'
+      path: '/university-matcher'
+      fullPath: '/university-matcher'
+      preLoaderRoute: typeof AuthenticatedUniversityMatcherRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/reality-checker': {
       id: '/_authenticated/reality-checker'
@@ -212,6 +232,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedExplorerRoute: typeof AuthenticatedExplorerRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedRealityCheckerRoute: typeof AuthenticatedRealityCheckerRoute
+  AuthenticatedUniversityMatcherRoute: typeof AuthenticatedUniversityMatcherRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -220,6 +241,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedExplorerRoute: AuthenticatedExplorerRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedRealityCheckerRoute: AuthenticatedRealityCheckerRoute,
+  AuthenticatedUniversityMatcherRoute: AuthenticatedUniversityMatcherRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
