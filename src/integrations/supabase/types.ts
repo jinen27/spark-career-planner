@@ -332,6 +332,42 @@ export type Database = {
         }
         Relationships: []
       }
+      university_matches: {
+        Row: {
+          academic_inputs: Json
+          academic_system: string
+          created_at: string
+          id: string
+          matches: Json
+          preferences: Json
+          summary: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          academic_inputs?: Json
+          academic_system: string
+          created_at?: string
+          id?: string
+          matches?: Json
+          preferences?: Json
+          summary?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          academic_inputs?: Json
+          academic_system?: string
+          created_at?: string
+          id?: string
+          matches?: Json
+          preferences?: Json
+          summary?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
