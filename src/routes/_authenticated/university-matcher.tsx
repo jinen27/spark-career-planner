@@ -50,6 +50,7 @@ function UniversityMatcherPage() {
   const [gcses, setGcses] = useState("");
   const [ibTotal, setIbTotal] = useState("");
   const [ibHL, setIbHL] = useState<SubjectGrade[]>([emptySubject(), emptySubject(), emptySubject()]);
+  const [ibSL, setIbSL] = useState<SubjectGrade[]>([emptySubject(), emptySubject(), emptySubject()]);
   const [gpaScale, setGpaScale] = useState("4.0");
   const [gpaCurrent, setGpaCurrent] = useState("");
   const [testScores, setTestScores] = useState("");
@@ -80,7 +81,7 @@ function UniversityMatcherPage() {
       const academic = system === "a_levels"
         ? { system, aLevels: { predicted: clean(aPredicted), gcses: gcses.trim() || undefined } }
         : system === "ib"
-        ? { system, ib: { totalPoints: ibTotal.trim() || undefined, higherLevel: clean(ibHL) } }
+        ? { system, ib: { totalPoints: ibTotal.trim() || undefined, higherLevel: clean(ibHL), standardLevel: clean(ibSL) } }
         : { system, gpa: { scale: gpaScale, current: gpaCurrent.trim() || undefined, testScores: testScores.trim() || undefined } };
       const preferences = {
         countries,
@@ -148,6 +149,15 @@ function UniversityMatcherPage() {
                   </div>
                 ))}
                 {ibHL.length < 4 && <Button variant="compassOutline" size="sm" onClick={() => setIbHL((p) => [...p, emptySubject()])}><Plus /> Add HL subject</Button>}
+                <Label className="text-xs uppercase tracking-wider pt-2">Standard Level subjects</Label>
+                {ibSL.map((s, i) => (
+                  <div key={i} className="flex gap-2">
+                    <Input placeholder="Subject" value={s.subject} onChange={(e) => setIbSL((p) => p.map((r, idx) => idx === i ? { ...r, subject: e.target.value } : r))} />
+                    <Input className="w-20" placeholder="6" value={s.grade} onChange={(e) => setIbSL((p) => p.map((r, idx) => idx === i ? { ...r, grade: e.target.value } : r))} />
+                    {ibSL.length > 1 && <Button variant="ghost" size="icon" onClick={() => setIbSL((p) => p.filter((_, idx) => idx !== i))}><Trash2 /></Button>}
+                  </div>
+                ))}
+                {ibSL.length < 4 && <Button variant="compassOutline" size="sm" onClick={() => setIbSL((p) => [...p, emptySubject()])}><Plus /> Add SL subject</Button>}
               </TabsContent>
 
               <TabsContent value="gpa" className="space-y-3 pt-4">

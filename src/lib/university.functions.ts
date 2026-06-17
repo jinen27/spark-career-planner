@@ -15,6 +15,7 @@ const AcademicInputsSchema = z.object({
   ib: z.object({
     totalPoints: z.string().max(10).optional(),
     higherLevel: z.array(SubjectGrade).max(6).optional(),
+    standardLevel: z.array(SubjectGrade).max(6).optional(),
     predicted: z.array(SubjectGrade).max(6).optional(),
   }).optional(),
   gpa: z.object({
