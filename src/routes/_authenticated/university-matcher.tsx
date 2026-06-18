@@ -189,7 +189,7 @@ function UniversityMatcherPage() {
               <div>
                 <Label className="text-xs uppercase tracking-wider">Target countries</Label>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {["United Kingdom", "United States", "Canada", "Australia", "Singapore", "Netherlands", "Germany", "Ireland"].map((c) => (
+                  {["United Kingdom", "United States", "Canada", "Australia", "Singapore", "Netherlands", "Germany", "Ireland", "India"].map((c) => (
                     <button key={c} type="button" onClick={() => toggleCountry(c)} className={`rounded-full border px-3 py-1 text-xs transition ${countries.includes(c) ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-primary/40"}`}>{c}</button>
                   ))}
                 </div>
