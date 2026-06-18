@@ -62,9 +62,10 @@ const GenerateInput = z.object({
 
 function friendlyAiError(error: unknown) {
   if (NoObjectGeneratedError.isInstance(error)) return "The university matches could not be formatted correctly. Please try again.";
-  if (error instanceof Error && error.message.includes("402")) return "University matching is temporarily unavailable because the workspace has no AI credits.";
-  if (error instanceof Error && error.message.includes("429")) return "The University Matcher is busy right now. Please wait a moment and try again.";
-  return "The University Matcher is temporarily unavailable. Please try again.";
+  const msg = error instanceof Error ? error.message : String(error);
+  if (msg.includes("402")) return "University matching is temporarily unavailable because the workspace has no AI credits.";
+  if (msg.includes("429")) return "The University Matcher is busy right now. Please wait a moment and try again.";
+  return `University Matcher error: ${msg.slice(0, 240)}`;
 }
 
 export const getUniversityMatcher = createServerFn({ method: "GET" })
@@ -105,11 +106,7 @@ export const generateUniversityMatches = createServerFn({ method: "POST" })
     try {
       const { output } = await generateText({
         model: gateway("google/gemini-3-flash-preview"),
-        output: Output.object({
-          schema: OutputSchema,
-          name: "university_match_predictor",
-          description: "Personalised university matches with eligibility tiers, gap analysis, and admission probability.",
-        }),
+        output: Output.object({ schema: OutputSchema }),
         prompt: `You are an ethical university admissions advisor for secondary school students.
 
 Generate 6–8 personalised university recommendations based on the student's academic qualifications, career interests, and preferences.
