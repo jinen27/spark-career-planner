@@ -42,17 +42,17 @@ const MatchSchema = z.object({
   admissionProbability: z.number().int().min(0).max(100),
   entryRequirements: z.string(),
   tuitionEstimate: z.string(),
-  scholarships: z.array(z.string()).max(5),
-  strengths: z.array(z.string()).min(1).max(5),
-  improvements: z.array(z.string()).max(5),
-  gapAnalysis: z.array(z.object({ area: z.string(), current: z.string(), target: z.string(), recommendation: z.string() })).max(5),
+  scholarships: z.array(z.string()).max(5).default([]),
+  strengths: z.array(z.string()).max(5).default([]),
+  improvements: z.array(z.string()).max(5).default([]),
+  gapAnalysis: z.array(z.object({ area: z.string(), current: z.string(), target: z.string(), recommendation: z.string() })).max(5).default([]),
   explanation: z.string(),
   ranking: z.string().optional(),
 });
 
 const OutputSchema = z.object({
   summary: z.string(),
-  matches: z.array(MatchSchema).min(4).max(9),
+  matches: z.array(MatchSchema).max(9),
 });
 
 const GenerateInput = z.object({
