@@ -106,11 +106,7 @@ export const generateUniversityMatches = createServerFn({ method: "POST" })
     try {
       const { output } = await generateText({
         model: gateway("google/gemini-3-flash-preview"),
-        output: Output.object({
-          schema: OutputSchema,
-          name: "university_match_predictor",
-          description: "Personalised university matches with eligibility tiers, gap analysis, and admission probability.",
-        }),
+        output: Output.object({ schema: OutputSchema }),
         prompt: `You are an ethical university admissions advisor for secondary school students.
 
 Generate 6–8 personalised university recommendations based on the student's academic qualifications, career interests, and preferences.
