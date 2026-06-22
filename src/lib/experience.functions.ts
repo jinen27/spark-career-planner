@@ -78,7 +78,7 @@ function friendlyAiError(error: unknown) {
 type CareerContext = { slug: string; title: string; description: string; responsibilities: unknown };
 
 async function resolveCareer(
-  supabase: Awaited<ReturnType<typeof requireSupabaseAuth.client>> extends never ? never : any,
+  supabase: any,
   userId: string,
   input: { source: "recommendation" | "catalog"; recommendationId?: string; careerSlug?: string },
 ): Promise<{ career: CareerContext; recommendationId: string | null }> {
