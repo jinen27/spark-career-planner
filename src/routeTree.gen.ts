@@ -14,10 +14,12 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedUniversityMatcherRouteImport } from './routes/_authenticated/university-matcher'
+import { Route as AuthenticatedStatementCoachRouteImport } from './routes/_authenticated/statement-coach'
 import { Route as AuthenticatedRealityCheckerRouteImport } from './routes/_authenticated/reality-checker'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedExplorerRouteImport } from './routes/_authenticated/explorer'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedCareerQuizRouteImport } from './routes/_authenticated/career-quiz'
 import { Route as AuthenticatedAssessmentRouteImport } from './routes/_authenticated/assessment'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -45,6 +47,12 @@ const AuthenticatedUniversityMatcherRoute =
     path: '/university-matcher',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedStatementCoachRoute =
+  AuthenticatedStatementCoachRouteImport.update({
+    id: '/statement-coach',
+    path: '/statement-coach',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedRealityCheckerRoute =
   AuthenticatedRealityCheckerRouteImport.update({
     id: '/reality-checker',
@@ -66,6 +74,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCareerQuizRoute = AuthenticatedCareerQuizRouteImport.update({
+  id: '/career-quiz',
+  path: '/career-quiz',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAssessmentRoute = AuthenticatedAssessmentRouteImport.update({
   id: '/assessment',
   path: '/assessment',
@@ -77,10 +90,12 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment': typeof AuthenticatedAssessmentRoute
+  '/career-quiz': typeof AuthenticatedCareerQuizRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/explorer': typeof AuthenticatedExplorerRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/reality-checker': typeof AuthenticatedRealityCheckerRoute
+  '/statement-coach': typeof AuthenticatedStatementCoachRoute
   '/university-matcher': typeof AuthenticatedUniversityMatcherRoute
 }
 export interface FileRoutesByTo {
@@ -88,10 +103,12 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment': typeof AuthenticatedAssessmentRoute
+  '/career-quiz': typeof AuthenticatedCareerQuizRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/explorer': typeof AuthenticatedExplorerRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/reality-checker': typeof AuthenticatedRealityCheckerRoute
+  '/statement-coach': typeof AuthenticatedStatementCoachRoute
   '/university-matcher': typeof AuthenticatedUniversityMatcherRoute
 }
 export interface FileRoutesById {
@@ -101,10 +118,12 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/assessment': typeof AuthenticatedAssessmentRoute
+  '/_authenticated/career-quiz': typeof AuthenticatedCareerQuizRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/explorer': typeof AuthenticatedExplorerRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/reality-checker': typeof AuthenticatedRealityCheckerRoute
+  '/_authenticated/statement-coach': typeof AuthenticatedStatementCoachRoute
   '/_authenticated/university-matcher': typeof AuthenticatedUniversityMatcherRoute
 }
 export interface FileRouteTypes {
@@ -114,10 +133,12 @@ export interface FileRouteTypes {
     | '/auth'
     | '/sitemap.xml'
     | '/assessment'
+    | '/career-quiz'
     | '/dashboard'
     | '/explorer'
     | '/profile'
     | '/reality-checker'
+    | '/statement-coach'
     | '/university-matcher'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -125,10 +146,12 @@ export interface FileRouteTypes {
     | '/auth'
     | '/sitemap.xml'
     | '/assessment'
+    | '/career-quiz'
     | '/dashboard'
     | '/explorer'
     | '/profile'
     | '/reality-checker'
+    | '/statement-coach'
     | '/university-matcher'
   id:
     | '__root__'
@@ -137,10 +160,12 @@ export interface FileRouteTypes {
     | '/auth'
     | '/sitemap.xml'
     | '/_authenticated/assessment'
+    | '/_authenticated/career-quiz'
     | '/_authenticated/dashboard'
     | '/_authenticated/explorer'
     | '/_authenticated/profile'
     | '/_authenticated/reality-checker'
+    | '/_authenticated/statement-coach'
     | '/_authenticated/university-matcher'
   fileRoutesById: FileRoutesById
 }
@@ -188,6 +213,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUniversityMatcherRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/statement-coach': {
+      id: '/_authenticated/statement-coach'
+      path: '/statement-coach'
+      fullPath: '/statement-coach'
+      preLoaderRoute: typeof AuthenticatedStatementCoachRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/reality-checker': {
       id: '/_authenticated/reality-checker'
       path: '/reality-checker'
@@ -216,6 +248,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/career-quiz': {
+      id: '/_authenticated/career-quiz'
+      path: '/career-quiz'
+      fullPath: '/career-quiz'
+      preLoaderRoute: typeof AuthenticatedCareerQuizRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/assessment': {
       id: '/_authenticated/assessment'
       path: '/assessment'
@@ -228,19 +267,23 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAssessmentRoute: typeof AuthenticatedAssessmentRoute
+  AuthenticatedCareerQuizRoute: typeof AuthenticatedCareerQuizRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExplorerRoute: typeof AuthenticatedExplorerRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedRealityCheckerRoute: typeof AuthenticatedRealityCheckerRoute
+  AuthenticatedStatementCoachRoute: typeof AuthenticatedStatementCoachRoute
   AuthenticatedUniversityMatcherRoute: typeof AuthenticatedUniversityMatcherRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAssessmentRoute: AuthenticatedAssessmentRoute,
+  AuthenticatedCareerQuizRoute: AuthenticatedCareerQuizRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExplorerRoute: AuthenticatedExplorerRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedRealityCheckerRoute: AuthenticatedRealityCheckerRoute,
+  AuthenticatedStatementCoachRoute: AuthenticatedStatementCoachRoute,
   AuthenticatedUniversityMatcherRoute: AuthenticatedUniversityMatcherRoute,
 }
 
