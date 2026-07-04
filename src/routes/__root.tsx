@@ -78,13 +78,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Compass Career Guidance" },
-      { name: "description", content: "Evidence-led assessments and explainable AI career guidance for students." },
+      { title: "Compass | AI Career Guidance for Students" },
+      { name: "description", content: "Evidence-led assessments and explainable AI career guidance for secondary school students." },
       { name: "author", content: "Compass" },
-      { property: "og:title", content: "Compass Career Guidance" },
-      { property: "og:description", content: "Discover fitting careers, university routes, and practical next steps." },
+      { property: "og:title", content: "Compass | AI Career Guidance for Students" },
+      { property: "og:description", content: "Evidence-led assessments and explainable AI career guidance for secondary school students." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Compass | AI Career Guidance for Students" },
+      { name: "twitter:description", content: "Evidence-led assessments and explainable AI career guidance for secondary school students." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/50b219d5-2281-4455-a9ee-504644f4c58c/id-preview-0ffa7f55--a427776a-50e4-405b-bcb9-ad6249223bb4.lovable.app-1783155401197.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/50b219d5-2281-4455-a9ee-504644f4c58c/id-preview-0ffa7f55--a427776a-50e4-405b-bcb9-ad6249223bb4.lovable.app-1783155401197.png" },
     ],
     links: [
       {
