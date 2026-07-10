@@ -142,9 +142,29 @@ function CareerQuizPage() {
             </div>
 
             <p className="text-xs text-muted-foreground">
-              This mini-game is a starting point. For explainable, evidence-led recommendations, complete the full assessment.
+              {saveMutation.isPending ? "Saving this run to your profile…" : saveMutation.isSuccess ? "Saved to your profile — you can revisit this run below." : "This mini-game is a starting point. For explainable, evidence-led recommendations, complete the full assessment."}
             </p>
           </div>
+        )}
+
+        {(history.data?.length ?? 0) > 0 && (
+          <section className="mt-14 border-t border-border pt-8">
+            <div className="mb-4 flex items-center gap-2">
+              <History className="size-4 text-primary" />
+              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Your past runs</h3>
+            </div>
+            <ul className="space-y-2">
+              {history.data!.map((run) => {
+                const meta = FAMILY_META[run.top_family as Family];
+                return (
+                  <li key={run.id} className="flex items-center justify-between rounded-lg border border-border bg-card p-3 text-sm">
+                    <span className="font-semibold">{meta ? `${meta.emoji} ${meta.name}` : run.top_family}</span>
+                    <span className="font-mono text-[11px] text-muted-foreground">{new Date(run.created_at).toLocaleDateString()}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
         )}
       </main>
     </div>
