@@ -1,10 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ArrowRight, RotateCcw, Sparkles, Trophy } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { ArrowRight, History, RotateCcw, Sparkles, Trophy } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { AppNav } from "@/components/app-nav";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { QUIZ_CARDS, FAMILY_META, scoreAnswers, type Family } from "@/lib/career-quiz-data";
+import { listQuizResults, saveQuizResult } from "@/lib/quiz.functions";
 
 export const Route = createFileRoute("/_authenticated/career-quiz")({
   component: CareerQuizPage,
@@ -16,6 +19,15 @@ export const Route = createFileRoute("/_authenticated/career-quiz")({
 
 function CareerQuizPage() {
   const navigate = useNavigate();
+  const saveFn = useServerFn(saveQuizResult);
+  const listFn = useServerFn(listQuizResults);
+  const qc = useQueryClient();
+  const history = useQuery({ queryKey: ["quiz-history"], queryFn: () => listFn() });
+  const saveMutation = useMutation({
+    mutationFn: (payload: { topFamily: string; scores: { family: string; score: number }[]; answers: string[][] }) => saveFn({ data: payload }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["quiz-history"] }),
+  });
+
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<string[][]>([]);
   const [picked, setPicked] = useState<"A" | "B" | null>(null);
@@ -26,6 +38,16 @@ function CareerQuizPage() {
   const results = useMemo(() => (done ? scoreAnswers(answers) : []), [done, answers]);
   const top3 = results.slice(0, 3);
   const maxScore = top3[0]?.score || 1;
+
+  useEffect(() => {
+    if (done && results.length && !saveMutation.isPending && saveMutation.data === undefined && !saveMutation.isError) {
+      saveMutation.mutate({
+        topFamily: results[0].family,
+        scores: results.map((r) => ({ family: r.family, score: r.score })),
+        answers,
+      });
+    }
+  }, [done, results, answers, saveMutation]);
 
   const choose = (side: "A" | "B") => {
     if (picked) return;
