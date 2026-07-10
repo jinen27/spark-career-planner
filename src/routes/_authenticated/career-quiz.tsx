@@ -1,10 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ArrowRight, RotateCcw, Sparkles, Trophy } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { ArrowRight, History, RotateCcw, Sparkles, Trophy } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { AppNav } from "@/components/app-nav";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { QUIZ_CARDS, FAMILY_META, scoreAnswers, type Family } from "@/lib/career-quiz-data";
+import { listQuizResults, saveQuizResult } from "@/lib/quiz.functions";
 
 export const Route = createFileRoute("/_authenticated/career-quiz")({
   component: CareerQuizPage,
@@ -16,6 +19,15 @@ export const Route = createFileRoute("/_authenticated/career-quiz")({
 
 function CareerQuizPage() {
   const navigate = useNavigate();
+  const saveFn = useServerFn(saveQuizResult);
+  const listFn = useServerFn(listQuizResults);
+  const qc = useQueryClient();
+  const history = useQuery({ queryKey: ["quiz-history"], queryFn: () => listFn() });
+  const saveMutation = useMutation({
+    mutationFn: (payload: { topFamily: string; scores: { family: string; score: number }[]; answers: string[][] }) => saveFn({ data: payload }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["quiz-history"] }),
+  });
+
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<string[][]>([]);
   const [picked, setPicked] = useState<"A" | "B" | null>(null);
@@ -26,6 +38,16 @@ function CareerQuizPage() {
   const results = useMemo(() => (done ? scoreAnswers(answers) : []), [done, answers]);
   const top3 = results.slice(0, 3);
   const maxScore = top3[0]?.score || 1;
+
+  useEffect(() => {
+    if (done && results.length && !saveMutation.isPending && saveMutation.data === undefined && !saveMutation.isError) {
+      saveMutation.mutate({
+        topFamily: results[0].family,
+        scores: results.map((r) => ({ family: r.family, score: r.score })),
+        answers,
+      });
+    }
+  }, [done, results, answers, saveMutation]);
 
   const choose = (side: "A" | "B") => {
     if (picked) return;
@@ -38,7 +60,7 @@ function CareerQuizPage() {
     }, 220);
   };
 
-  const reset = () => { setStep(0); setAnswers([]); setPicked(null); };
+  const reset = () => { setStep(0); setAnswers([]); setPicked(null); saveMutation.reset(); };
 
   return (
     <div className="min-h-screen bg-background">
@@ -120,9 +142,29 @@ function CareerQuizPage() {
             </div>
 
             <p className="text-xs text-muted-foreground">
-              This mini-game is a starting point. For explainable, evidence-led recommendations, complete the full assessment.
+              {saveMutation.isPending ? "Saving this run to your profile…" : saveMutation.isSuccess ? "Saved to your profile — you can revisit this run below." : "This mini-game is a starting point. For explainable, evidence-led recommendations, complete the full assessment."}
             </p>
           </div>
+        )}
+
+        {(history.data?.length ?? 0) > 0 && (
+          <section className="mt-14 border-t border-border pt-8">
+            <div className="mb-4 flex items-center gap-2">
+              <History className="size-4 text-primary" />
+              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Your past runs</h3>
+            </div>
+            <ul className="space-y-2">
+              {history.data!.map((run) => {
+                const meta = FAMILY_META[run.top_family as Family];
+                return (
+                  <li key={run.id} className="flex items-center justify-between rounded-lg border border-border bg-card p-3 text-sm">
+                    <span className="font-semibold">{meta ? `${meta.emoji} ${meta.name}` : run.top_family}</span>
+                    <span className="font-mono text-[11px] text-muted-foreground">{new Date(run.created_at).toLocaleDateString()}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
         )}
       </main>
     </div>

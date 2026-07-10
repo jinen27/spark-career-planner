@@ -17,6 +17,7 @@ import { Route as AuthenticatedUniversityMatcherRouteImport } from './routes/_au
 import { Route as AuthenticatedStatementCoachRouteImport } from './routes/_authenticated/statement-coach'
 import { Route as AuthenticatedRealityCheckerRouteImport } from './routes/_authenticated/reality-checker'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedFeedbackRouteImport } from './routes/_authenticated/feedback'
 import { Route as AuthenticatedExplorerRouteImport } from './routes/_authenticated/explorer'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCareerQuizRouteImport } from './routes/_authenticated/career-quiz'
@@ -64,6 +65,11 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedFeedbackRoute = AuthenticatedFeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedExplorerRoute = AuthenticatedExplorerRouteImport.update({
   id: '/explorer',
   path: '/explorer',
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/career-quiz': typeof AuthenticatedCareerQuizRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/explorer': typeof AuthenticatedExplorerRoute
+  '/feedback': typeof AuthenticatedFeedbackRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/reality-checker': typeof AuthenticatedRealityCheckerRoute
   '/statement-coach': typeof AuthenticatedStatementCoachRoute
@@ -106,6 +113,7 @@ export interface FileRoutesByTo {
   '/career-quiz': typeof AuthenticatedCareerQuizRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/explorer': typeof AuthenticatedExplorerRoute
+  '/feedback': typeof AuthenticatedFeedbackRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/reality-checker': typeof AuthenticatedRealityCheckerRoute
   '/statement-coach': typeof AuthenticatedStatementCoachRoute
@@ -121,6 +129,7 @@ export interface FileRoutesById {
   '/_authenticated/career-quiz': typeof AuthenticatedCareerQuizRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/explorer': typeof AuthenticatedExplorerRoute
+  '/_authenticated/feedback': typeof AuthenticatedFeedbackRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/reality-checker': typeof AuthenticatedRealityCheckerRoute
   '/_authenticated/statement-coach': typeof AuthenticatedStatementCoachRoute
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
     | '/career-quiz'
     | '/dashboard'
     | '/explorer'
+    | '/feedback'
     | '/profile'
     | '/reality-checker'
     | '/statement-coach'
@@ -149,6 +159,7 @@ export interface FileRouteTypes {
     | '/career-quiz'
     | '/dashboard'
     | '/explorer'
+    | '/feedback'
     | '/profile'
     | '/reality-checker'
     | '/statement-coach'
@@ -163,6 +174,7 @@ export interface FileRouteTypes {
     | '/_authenticated/career-quiz'
     | '/_authenticated/dashboard'
     | '/_authenticated/explorer'
+    | '/_authenticated/feedback'
     | '/_authenticated/profile'
     | '/_authenticated/reality-checker'
     | '/_authenticated/statement-coach'
@@ -234,6 +246,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/feedback': {
+      id: '/_authenticated/feedback'
+      path: '/feedback'
+      fullPath: '/feedback'
+      preLoaderRoute: typeof AuthenticatedFeedbackRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/explorer': {
       id: '/_authenticated/explorer'
       path: '/explorer'
@@ -270,6 +289,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCareerQuizRoute: typeof AuthenticatedCareerQuizRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExplorerRoute: typeof AuthenticatedExplorerRoute
+  AuthenticatedFeedbackRoute: typeof AuthenticatedFeedbackRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedRealityCheckerRoute: typeof AuthenticatedRealityCheckerRoute
   AuthenticatedStatementCoachRoute: typeof AuthenticatedStatementCoachRoute
@@ -281,6 +301,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCareerQuizRoute: AuthenticatedCareerQuizRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExplorerRoute: AuthenticatedExplorerRoute,
+  AuthenticatedFeedbackRoute: AuthenticatedFeedbackRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedRealityCheckerRoute: AuthenticatedRealityCheckerRoute,
   AuthenticatedStatementCoachRoute: AuthenticatedStatementCoachRoute,
