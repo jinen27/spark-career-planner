@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowRight, BookOpen, BriefcaseBusiness, Check, Circle, Compass, Scale, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen, BriefcaseBusiness, Check, Circle, Compass, Feather, MessageSquare, Scale, Sparkles, Trophy } from "lucide-react";
 import { useState } from "react";
 import { AppNav } from "@/components/app-nav";
 import { LoadingView } from "@/components/loading-view";
