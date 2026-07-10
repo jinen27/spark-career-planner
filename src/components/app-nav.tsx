@@ -13,7 +13,7 @@ export function AppNav({ initials = "ST" }: { initials?: string }) {
     await queryClient.cancelQueries(); queryClient.clear(); await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   };
-  const links = [{ to: "/dashboard", label: "Dashboard" }, { to: "/reality-checker", label: "Reality Check" }, { to: "/university-matcher", label: "Universities" }, { to: "/statement-coach", label: "Statement Coach" }, { to: "/explorer", label: "Explorer" }, { to: "/career-quiz", label: "Quiz" }, { to: "/assessment", label: "Assessment" }, { to: "/profile", label: "Profile" }] as const;
+  const links = [{ to: "/dashboard", label: "Dashboard" }, { to: "/reality-checker", label: "Reality Check" }, { to: "/university-matcher", label: "Universities" }, { to: "/statement-coach", label: "Statement Coach" }, { to: "/explorer", label: "Explorer" }, { to: "/career-quiz", label: "Quiz" }, { to: "/assessment", label: "Assessment" }, { to: "/feedback", label: "Feedback" }, { to: "/profile", label: "Profile" }] as const;
   return <nav className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-md">
     <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-5 sm:px-6 md:flex md:justify-between">
       <div className="flex min-w-0 items-center gap-8"><Link to="/dashboard" className="truncate font-black tracking-tighter text-xl uppercase">Compass</Link>
