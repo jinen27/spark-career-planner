@@ -60,7 +60,7 @@ function CareerQuizPage() {
     }, 220);
   };
 
-  const reset = () => { setStep(0); setAnswers([]); setPicked(null); };
+  const reset = () => { setStep(0); setAnswers([]); setPicked(null); saveMutation.reset(); };
 
   return (
     <div className="min-h-screen bg-background">
