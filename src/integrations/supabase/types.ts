@@ -296,6 +296,36 @@ export type Database = {
           },
         ]
       }
+      feedback_messages: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          message: string
+          reply_email: string | null
+          subject: string
+          user_id: string | null
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          id?: string
+          message: string
+          reply_email?: string | null
+          subject: string
+          user_id?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          message?: string
+          reply_email?: string | null
+          subject?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           country: string
@@ -329,6 +359,33 @@ export type Database = {
           preferences?: Json
           school_year?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      quiz_results: {
+        Row: {
+          answers: Json
+          created_at: string
+          id: string
+          scores: Json
+          top_family: string
+          user_id: string
+        }
+        Insert: {
+          answers?: Json
+          created_at?: string
+          id?: string
+          scores?: Json
+          top_family: string
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          created_at?: string
+          id?: string
+          scores?: Json
+          top_family?: string
+          user_id?: string
         }
         Relationships: []
       }
