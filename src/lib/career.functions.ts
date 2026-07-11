@@ -64,7 +64,7 @@ export const saveAssessment = createServerFn({ method: "POST" }).middleware([req
   return created;
 });
 
-export const analyseAssessment = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator((input: unknown) => z.object({ assessmentId: z.string().uuid() }).parse(input)).handler(async ({ data, context }) => {
+export const analyseAssessment = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator((input: unknown) => z.object({ assessmentId: z.string().uuid(), quizSignal: z.array(z.string()).max(8).optional() }).parse(input)).handler(async ({ data, context }) => {
   const [{ data: assessment, error: assessmentError }, { data: profile, error: profileError }] = await Promise.all([
     context.supabase.from("assessment_sessions").select("*").eq("id", data.assessmentId).eq("user_id", context.userId).single(),
     context.supabase.from("profiles").select("*").eq("id", context.userId).single(),
