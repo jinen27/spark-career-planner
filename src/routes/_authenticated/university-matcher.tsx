@@ -347,6 +347,7 @@ function MatchCard({ match }: { match: Match }) {
           <ul className="mt-1 flex flex-wrap gap-1">{match.scholarships.map((s) => <li key={s} className="rounded-full border border-border px-2 py-0.5 text-xs">{s}</li>)}</ul>
         </div>
       )}
+      </div>
     </Card>
   );
 }
