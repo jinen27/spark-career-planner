@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { ArrowRight, GraduationCap, Loader2, Plus, Sparkles, Target, Trash2, TrendingUp } from "lucide-react";
+import { ArrowRight, GraduationCap, Loader2, MapPin, Plus, Sparkles, Target, Trash2, TrendingUp } from "lucide-react";
 import { AppNav } from "@/components/app-nav";
 import { LoadingView } from "@/components/loading-view";
 import { Button } from "@/components/ui/button";
