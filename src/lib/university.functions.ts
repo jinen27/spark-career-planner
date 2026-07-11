@@ -131,6 +131,10 @@ Important rules:
 - gapAnalysis: if the student is below requirements in any area, provide concrete current → target steps. Otherwise omit or keep short.
 - explanation is a short paragraph (2–3 sentences) connecting the student's profile to this programme.
 - summary: 1–2 sentences describing the overall recommendation portfolio.
+- city: the specific city (and neighbourhood/district if famous, e.g. "Cambridge, MA" or "Bloomsbury, London").
+- campusSetting: one short phrase — e.g. "Historic urban campus in central London", "Suburban parkland campus 20 min from city", "Rural collegiate campus".
+- campusImageQuery: 3–6 plain English keywords that will retrieve a good photo of THIS university's campus from Unsplash (e.g. "Stanford University main quad", "IIT Bombay campus"). No punctuation.
+- lifestyle: 1–2 sentences on student life — weather, housing style, social scene, cost of living, transport, notable student traditions.
 
 Student profile: ${JSON.stringify({
           country: profile.country,
