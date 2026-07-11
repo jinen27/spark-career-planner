@@ -20,7 +20,6 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedFeedbackRouteImport } from './routes/_authenticated/feedback'
 import { Route as AuthenticatedExplorerRouteImport } from './routes/_authenticated/explorer'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedCareerQuizRouteImport } from './routes/_authenticated/career-quiz'
 import { Route as AuthenticatedAssessmentRouteImport } from './routes/_authenticated/assessment'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -80,11 +79,6 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedCareerQuizRoute = AuthenticatedCareerQuizRouteImport.update({
-  id: '/career-quiz',
-  path: '/career-quiz',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedAssessmentRoute = AuthenticatedAssessmentRouteImport.update({
   id: '/assessment',
   path: '/assessment',
@@ -96,7 +90,6 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment': typeof AuthenticatedAssessmentRoute
-  '/career-quiz': typeof AuthenticatedCareerQuizRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/explorer': typeof AuthenticatedExplorerRoute
   '/feedback': typeof AuthenticatedFeedbackRoute
@@ -110,7 +103,6 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment': typeof AuthenticatedAssessmentRoute
-  '/career-quiz': typeof AuthenticatedCareerQuizRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/explorer': typeof AuthenticatedExplorerRoute
   '/feedback': typeof AuthenticatedFeedbackRoute
@@ -126,7 +118,6 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/assessment': typeof AuthenticatedAssessmentRoute
-  '/_authenticated/career-quiz': typeof AuthenticatedCareerQuizRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/explorer': typeof AuthenticatedExplorerRoute
   '/_authenticated/feedback': typeof AuthenticatedFeedbackRoute
@@ -142,7 +133,6 @@ export interface FileRouteTypes {
     | '/auth'
     | '/sitemap.xml'
     | '/assessment'
-    | '/career-quiz'
     | '/dashboard'
     | '/explorer'
     | '/feedback'
@@ -156,7 +146,6 @@ export interface FileRouteTypes {
     | '/auth'
     | '/sitemap.xml'
     | '/assessment'
-    | '/career-quiz'
     | '/dashboard'
     | '/explorer'
     | '/feedback'
@@ -171,7 +160,6 @@ export interface FileRouteTypes {
     | '/auth'
     | '/sitemap.xml'
     | '/_authenticated/assessment'
-    | '/_authenticated/career-quiz'
     | '/_authenticated/dashboard'
     | '/_authenticated/explorer'
     | '/_authenticated/feedback'
@@ -267,13 +255,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/career-quiz': {
-      id: '/_authenticated/career-quiz'
-      path: '/career-quiz'
-      fullPath: '/career-quiz'
-      preLoaderRoute: typeof AuthenticatedCareerQuizRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/assessment': {
       id: '/_authenticated/assessment'
       path: '/assessment'
@@ -286,7 +267,6 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAssessmentRoute: typeof AuthenticatedAssessmentRoute
-  AuthenticatedCareerQuizRoute: typeof AuthenticatedCareerQuizRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedExplorerRoute: typeof AuthenticatedExplorerRoute
   AuthenticatedFeedbackRoute: typeof AuthenticatedFeedbackRoute
@@ -298,7 +278,6 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAssessmentRoute: AuthenticatedAssessmentRoute,
-  AuthenticatedCareerQuizRoute: AuthenticatedCareerQuizRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedExplorerRoute: AuthenticatedExplorerRoute,
   AuthenticatedFeedbackRoute: AuthenticatedFeedbackRoute,
@@ -320,13 +299,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
