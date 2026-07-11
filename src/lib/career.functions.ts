@@ -64,7 +64,7 @@ export const saveAssessment = createServerFn({ method: "POST" }).middleware([req
   return created;
 });
 
-export const analyseAssessment = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator((input: unknown) => z.object({ assessmentId: z.string().uuid() }).parse(input)).handler(async ({ data, context }) => {
+export const analyseAssessment = createServerFn({ method: "POST" }).middleware([requireSupabaseAuth]).inputValidator((input: unknown) => z.object({ assessmentId: z.string().uuid(), quizSignal: z.array(z.string()).max(8).optional() }).parse(input)).handler(async ({ data, context }) => {
   const [{ data: assessment, error: assessmentError }, { data: profile, error: profileError }] = await Promise.all([
     context.supabase.from("assessment_sessions").select("*").eq("id", data.assessmentId).eq("user_id", context.userId).single(),
     context.supabase.from("profiles").select("*").eq("id", context.userId).single(),
@@ -77,7 +77,15 @@ export const analyseAssessment = createServerFn({ method: "POST" }).middleware([
   const { createCareerAiProvider } = await import("@/lib/ai-gateway.server");
   const gateway = createCareerAiProvider(apiKey);
    const model = gateway("google/gemini-3-flash-preview");
-   const prompt = `You are an ethical career counsellor for secondary school students. Generate diverse, realistic and explainable career recommendations. Never imply certainty; confidence is profile fit, not predicted success. Use concise, supportive language. Ground every match reason in the supplied profile and RIASEC scores. Include current but non-numeric job outlook language, pathways, related roles, degree majors, school subjects, technical and soft skills, and concrete preparation experiences. Build a staged roadmap suitable for the student's education level.\n\n${ANALYSIS_INSTRUCTIONS}\n\nStudent profile: ${JSON.stringify(profile)}\nRIASEC scores (0-100): ${JSON.stringify(assessment.scores)}`;
+   const prompt = `You are an ethical career counsellor for secondary school students. Generate diverse, realistic and explainable career recommendations. Never imply certainty; confidence is profile fit, not predicted success. Use concise, supportive language. Ground every match reason in the supplied profile and RIASEC scores. Include current but non-numeric job outlook language, pathways, related roles, degree majors, school subjects, technical and soft skills, and concrete preparation experiences. Build a staged roadmap suitable for the student's education level.
+
+DIVERSITY RULES (critical): The three recommendations MUST come from three DIFFERENT industry families (e.g. don't return three tech/data roles). Do NOT default to "Data Scientist", "Software Engineer", or generic "Analyst" unless the RIASEC scores strongly and specifically justify it (Investigative AND Realistic/Conventional both high, plus supporting subjects). Prefer specific, less-obvious roles over generic ones — e.g. "Biomedical Engineer" over "Engineer", "UX Researcher" over "Designer", "Epidemiologist" over "Scientist". Draw from a wide spread: healthcare, engineering disciplines, creative & media, law & policy, business & finance, skilled trades, education, social impact, applied sciences, sports & performance. At most ONE recommendation may be a pure software/data role.
+
+${ANALYSIS_INSTRUCTIONS}
+
+Student profile: ${JSON.stringify(profile)}
+RIASEC scores (0-100): ${JSON.stringify(assessment.scores)}
+${data.quizSignal?.length ? `Warm-up quiz instincts (top career families, use as a diversity nudge — not a hard constraint): ${data.quizSignal.join(", ")}` : ""}`;
    let output: z.infer<typeof AnalysisSchema>;
    try {
      const result = await generateText({

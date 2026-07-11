@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { ArrowRight, GraduationCap, Loader2, Plus, Sparkles, Target, Trash2, TrendingUp } from "lucide-react";
+import { ArrowRight, GraduationCap, Loader2, MapPin, Plus, Sparkles, Target, Trash2, TrendingUp } from "lucide-react";
 import { AppNav } from "@/components/app-nav";
 import { LoadingView } from "@/components/loading-view";
 import { Button } from "@/components/ui/button";
@@ -29,6 +29,7 @@ type System = "a_levels" | "ib" | "gpa";
 type SubjectGrade = { subject: string; grade: string };
 type Match = {
   university: string; country: string; major: string;
+  city?: string; campusSetting?: string; campusImageQuery?: string; lifestyle?: string;
   matchLevel: "strong" | "competitive" | "reach";
   admissionProbability: number;
   entryRequirements: string; tuitionEstimate: string;
@@ -276,14 +277,23 @@ const levelStyle = {
 
 function MatchCard({ match }: { match: Match }) {
   const style = levelStyle[match.matchLevel];
+  const imgQuery = encodeURIComponent(match.campusImageQuery || `${match.university} campus`);
+  const imgSrc = `https://source.unsplash.com/featured/800x400/?${imgQuery}`;
+  const location = [match.city, match.country].filter(Boolean).join(" · ");
   return (
-    <Card className="flex flex-col p-5">
+    <Card className="flex flex-col overflow-hidden p-0">
+      <div className="relative h-40 w-full overflow-hidden bg-muted">
+        <img src={imgSrc} alt={`${match.university} campus`} loading="lazy" className="h-full w-full object-cover" onError={(e) => { (e.currentTarget as HTMLImageElement).style.opacity = "0.2"; }} />
+        <Badge variant="outline" className={`absolute right-3 top-3 ${style.className} backdrop-blur`}>{style.label}</Badge>
+      </div>
+      <div className="flex flex-col p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h3 className="text-lg font-bold leading-tight">{match.university}</h3>
-          <p className="text-sm text-muted-foreground">{match.major} · {match.country}</p>
+          <p className="text-sm text-muted-foreground">{match.major}</p>
+          {location && <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="size-3" /> {location}</p>}
+          {match.campusSetting && <p className="mt-1 text-xs text-muted-foreground italic">{match.campusSetting}</p>}
         </div>
-        <Badge variant="outline" className={style.className}>{style.label}</Badge>
       </div>
 
       <div className="mt-4">
@@ -337,6 +347,7 @@ function MatchCard({ match }: { match: Match }) {
           <ul className="mt-1 flex flex-wrap gap-1">{match.scholarships.map((s) => <li key={s} className="rounded-full border border-border px-2 py-0.5 text-xs">{s}</li>)}</ul>
         </div>
       )}
+      </div>
     </Card>
   );
 }
