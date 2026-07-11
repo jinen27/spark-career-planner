@@ -37,6 +37,10 @@ const PreferencesSchema = z.object({
 const MatchSchema = z.object({
   university: z.string(),
   country: z.string(),
+  city: z.string(),
+  campusSetting: z.string(),
+  campusImageQuery: z.string(),
+  lifestyle: z.string(),
   major: z.string(),
   matchLevel: z.enum(["strong", "competitive", "reach"]),
   admissionProbability: z.number(),
