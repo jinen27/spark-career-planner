@@ -29,6 +29,7 @@ type System = "a_levels" | "ib" | "gpa";
 type SubjectGrade = { subject: string; grade: string };
 type Match = {
   university: string; country: string; major: string;
+  city?: string; campusSetting?: string; campusImageQuery?: string; lifestyle?: string;
   matchLevel: "strong" | "competitive" | "reach";
   admissionProbability: number;
   entryRequirements: string; tuitionEstimate: string;
