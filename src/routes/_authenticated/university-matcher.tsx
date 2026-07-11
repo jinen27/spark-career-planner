@@ -277,14 +277,23 @@ const levelStyle = {
 
 function MatchCard({ match }: { match: Match }) {
   const style = levelStyle[match.matchLevel];
+  const imgQuery = encodeURIComponent(match.campusImageQuery || `${match.university} campus`);
+  const imgSrc = `https://source.unsplash.com/featured/800x400/?${imgQuery}`;
+  const location = [match.city, match.country].filter(Boolean).join(" · ");
   return (
-    <Card className="flex flex-col p-5">
+    <Card className="flex flex-col overflow-hidden p-0">
+      <div className="relative h-40 w-full overflow-hidden bg-muted">
+        <img src={imgSrc} alt={`${match.university} campus`} loading="lazy" className="h-full w-full object-cover" onError={(e) => { (e.currentTarget as HTMLImageElement).style.opacity = "0.2"; }} />
+        <Badge variant="outline" className={`absolute right-3 top-3 ${style.className} backdrop-blur`}>{style.label}</Badge>
+      </div>
+      <div className="flex flex-col p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h3 className="text-lg font-bold leading-tight">{match.university}</h3>
-          <p className="text-sm text-muted-foreground">{match.major} · {match.country}</p>
+          <p className="text-sm text-muted-foreground">{match.major}</p>
+          {location && <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="size-3" /> {location}</p>}
+          {match.campusSetting && <p className="mt-1 text-xs text-muted-foreground italic">{match.campusSetting}</p>}
         </div>
-        <Badge variant="outline" className={style.className}>{style.label}</Badge>
       </div>
 
       <div className="mt-4">
