@@ -52,7 +52,13 @@ const MatchSchema = z.object({
   gapAnalysis: z.array(z.object({ area: z.string(), current: z.string(), target: z.string(), recommendation: z.string() })),
   explanation: z.string(),
   ranking: z.string(),
+  websiteDomain: z.string(),
+  acceptanceRate: z.string(),
+  programmes: z.array(z.string()),
+  notableAlumni: z.array(z.string()),
+  graduateOutcome: z.string(),
 });
+
 
 const OutputSchema = z.object({
   summary: z.string(),
