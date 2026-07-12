@@ -141,6 +141,12 @@ Important rules:
 - campusSetting: one short phrase — e.g. "Historic urban campus in central London", "Suburban parkland campus 20 min from city", "Rural collegiate campus".
 - campusImageQuery: 3–6 plain English keywords that will retrieve a good photo of THIS university's campus from Unsplash (e.g. "Stanford University main quad", "IIT Bombay campus"). No punctuation.
 - lifestyle: 1–2 sentences on student life — weather, housing style, social scene, cost of living, transport, notable student traditions.
+- websiteDomain: the university's primary root domain WITHOUT protocol or www, e.g. "harvard.edu", "ox.ac.uk", "nus.edu.sg", "iitb.ac.in". Used to fetch the official logo.
+- acceptanceRate: short phrase like "~5% overall" or "~17% for this course" or "Open access".
+- programmes: 2–4 relevant named degree programmes/tracks offered in this major area at this university (e.g. "BEng Mechanical Engineering", "MEng Mechanical Engineering with a Year Abroad").
+- notableAlumni: 2–3 well-known alumni names (empty array if genuinely unknown).
+- graduateOutcome: one short sentence about graduate employment / further study outcomes for this programme.
+- ranking: short phrase like "#3 QS 2024" or "Top 50 THE World Rankings".
 
 Student profile: ${JSON.stringify({
           country: profile.country,
