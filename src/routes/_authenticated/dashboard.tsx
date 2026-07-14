@@ -14,7 +14,7 @@ import { dimensionNames, type Dimension } from "@/lib/assessment";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({ component: DashboardPage, head: () => ({ meta: [{ title: "Your career dashboard | Compass" }, { name: "description", content: "Review your explainable career matches, university preparation guidance, and personal roadmap." }] }) });
 
-const list = (value: unknown) => Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
+
 
 function DashboardPage() {
   const fetchDashboard = useServerFn(getDashboard);
