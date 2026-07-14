@@ -1,12 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowRight, BookOpen, BriefcaseBusiness, Check, Circle, Compass, Feather, MessageSquare, Scale, Sparkles, Trophy } from "lucide-react";
-import { useState } from "react";
+import { ArrowRight, BookOpen, BookmarkCheck, BriefcaseBusiness, Check, Circle, Compass, Feather, GitCompare, MessageSquare, Scale, Sparkles, Trophy } from "lucide-react";
+import { useMemo, useState } from "react";
 import { AppNav } from "@/components/app-nav";
 import { LoadingView } from "@/components/loading-view";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { CareerCard, CareerCompareTable, useFavCareers, type CareerRecommendation } from "@/components/career-card";
 import { getDashboard, togglePlanStep } from "@/lib/career.functions";
 import { dimensionNames, type Dimension } from "@/lib/assessment";
 
