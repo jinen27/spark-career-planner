@@ -100,8 +100,14 @@ function DashboardPage() {
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">Interactive career cards</p>
             <h2 className="mt-1 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">Ranked recommendations</h2>
           </div>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             {favCount > 0 && <span className="flex items-center gap-1"><BookmarkCheck className="size-3.5 text-primary" />{favCount} saved</span>}
+            <Button size="sm" variant="compassOutline" onClick={() => navigate({ to: "/roadmap" })}>
+              <Map className="size-4" /> View roadmap
+            </Button>
+            <Button size="sm" variant="compassOutline" onClick={downloadReport} disabled={downloading}>
+              {downloading ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />} PDF report
+            </Button>
             <Button size="sm" variant="compassOutline" disabled={compareIds.length < 2} onClick={() => setShowCompare(true)}>
               <GitCompare className="size-4" /> Compare ({compareIds.length}/3)
             </Button>
