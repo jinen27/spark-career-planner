@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowRight, BookOpen, BookmarkCheck, BriefcaseBusiness, Check, Circle, Compass, Feather, GitCompare, MessageSquare, Scale, Sparkles, Trophy } from "lucide-react";
+import { ArrowRight, BookOpen, BookmarkCheck, BriefcaseBusiness, Check, Circle, Compass, Download, Feather, GitCompare, Loader2, Map, MessageSquare, Scale, Sparkles, Trophy } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AppNav } from "@/components/app-nav";
 import { LoadingView } from "@/components/loading-view";
@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CareerCard, CareerCompareTable, useFavCareers, type CareerRecommendation } from "@/components/career-card";
 import { getDashboard, togglePlanStep } from "@/lib/career.functions";
+import { getUniversityMatcher } from "@/lib/university.functions";
 import { dimensionNames, type Dimension } from "@/lib/assessment";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({ component: DashboardPage, head: () => ({ meta: [{ title: "Your career dashboard | Compass" }, { name: "description", content: "Review your explainable career matches, university preparation guidance, and personal roadmap." }] }) });
