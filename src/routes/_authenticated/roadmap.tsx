@@ -103,7 +103,7 @@ function RoadmapPage() {
               <GraduationCap className="size-3.5" /> University stage
             </div>
             <h3 className="mt-2 text-xl font-bold">
-              {top.university_majors?.[0] ?? "Degree pathway"}
+              {(Array.isArray(top.university_majors) ? (top.university_majors[0] as string | undefined) : undefined) ?? "Degree pathway"}
             </h3>
             <p className="mt-1 text-sm text-muted-foreground">
               {strongUnis.length > 0
