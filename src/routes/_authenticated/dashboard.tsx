@@ -19,6 +19,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({ component: D
 
 function DashboardPage() {
   const fetchDashboard = useServerFn(getDashboard);
+  const fetchUnis = useServerFn(getUniversityMatcher);
   const toggle = useServerFn(togglePlanStep);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -26,10 +27,48 @@ function DashboardPage() {
   const { favs, toggle: toggleFav } = useFavCareers();
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [showCompare, setShowCompare] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   const recommendations = (data?.recommendations ?? []) as CareerRecommendation[];
   const compareItems = useMemo(() => recommendations.filter((r) => compareIds.includes(r.id)), [recommendations, compareIds]);
   const toggleCompare = (id: string) => setCompareIds((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : prev.length >= 3 ? prev : [...prev, id]);
+
+  const downloadReport = async () => {
+    if (!data) return;
+    setDownloading(true);
+    try {
+      const [{ generateCareerReport }, unis] = await Promise.all([
+        import("@/lib/report"),
+        fetchUnis().catch(() => null),
+      ]);
+      const matches = (unis?.latest?.matches ?? []) as Parameters<typeof generateCareerReport>[0]["universities"];
+      generateCareerReport({
+        studentName: data.profile?.display_name || "Student",
+        educationalStage: data.profile?.educational_stage,
+        country: data.profile?.country,
+        scores: (data.assessment?.scores ?? {}) as Record<string, number>,
+        recommendations: recommendations.map((r) => ({
+          rank: r.rank,
+          career_title: r.career_title,
+          confidence: r.confidence,
+          description: r.description,
+          match_reasons: r.match_reasons,
+          university_majors: r.university_majors,
+          recommended_subjects: r.recommended_subjects,
+          technical_skills: r.technical_skills,
+          soft_skills: r.soft_skills,
+          preparation_experiences: r.preparation_experiences,
+          outlook: r.outlook,
+        })),
+        plan: (data.plan ?? []).map((p) => ({
+          title: p.title, description: p.description, timeframe: p.timeframe, category: p.category, completed: p.completed,
+        })),
+        universities: matches ?? [],
+      });
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   if (isLoading) return <LoadingView/>;
   if (error || !data) return <div className="grid min-h-screen place-items-center px-6 text-center"><div><h1 className="text-2xl font-bold">Your dashboard could not load.</h1><p className="mt-2 text-muted-foreground">Please refresh and try again.</p></div></div>;
