@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowRight, BookOpen, BookmarkCheck, BriefcaseBusiness, Check, Circle, Compass, Feather, GitCompare, MessageSquare, Scale, Sparkles, Trophy } from "lucide-react";
+import { ArrowRight, BookOpen, BookmarkCheck, BriefcaseBusiness, Check, Circle, Compass, Download, Feather, GitCompare, Loader2, Map, MessageSquare, Scale, Sparkles, Trophy } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AppNav } from "@/components/app-nav";
 import { LoadingView } from "@/components/loading-view";
@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CareerCard, CareerCompareTable, useFavCareers, type CareerRecommendation } from "@/components/career-card";
 import { getDashboard, togglePlanStep } from "@/lib/career.functions";
+import { getUniversityMatcher } from "@/lib/university.functions";
 import { dimensionNames, type Dimension } from "@/lib/assessment";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({ component: DashboardPage, head: () => ({ meta: [{ title: "Your career dashboard | Compass" }, { name: "description", content: "Review your explainable career matches, university preparation guidance, and personal roadmap." }] }) });
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({ component: D
 
 function DashboardPage() {
   const fetchDashboard = useServerFn(getDashboard);
+  const fetchUnis = useServerFn(getUniversityMatcher);
   const toggle = useServerFn(togglePlanStep);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -25,10 +27,48 @@ function DashboardPage() {
   const { favs, toggle: toggleFav } = useFavCareers();
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [showCompare, setShowCompare] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   const recommendations = (data?.recommendations ?? []) as CareerRecommendation[];
   const compareItems = useMemo(() => recommendations.filter((r) => compareIds.includes(r.id)), [recommendations, compareIds]);
   const toggleCompare = (id: string) => setCompareIds((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : prev.length >= 3 ? prev : [...prev, id]);
+
+  const downloadReport = async () => {
+    if (!data) return;
+    setDownloading(true);
+    try {
+      const [{ generateCareerReport }, unis] = await Promise.all([
+        import("@/lib/report"),
+        fetchUnis().catch(() => null),
+      ]);
+      const matches = (unis?.latest?.matches ?? []) as Parameters<typeof generateCareerReport>[0]["universities"];
+      generateCareerReport({
+        studentName: data.profile?.display_name || "Student",
+        educationalStage: data.profile?.educational_stage,
+        country: data.profile?.country,
+        scores: (data.assessment?.scores ?? {}) as Record<string, number>,
+        recommendations: recommendations.map((r) => ({
+          rank: r.rank,
+          career_title: r.career_title,
+          confidence: r.confidence,
+          description: r.description,
+          match_reasons: (r.match_reasons ?? []) as string[],
+          university_majors: (r.university_majors ?? []) as string[],
+          recommended_subjects: (r.recommended_subjects ?? []) as string[],
+          technical_skills: (r.technical_skills ?? []) as string[],
+          soft_skills: (r.soft_skills ?? []) as string[],
+          preparation_experiences: (r.preparation_experiences ?? []) as string[],
+          outlook: r.outlook ?? undefined,
+        })),
+        plan: (data.plan ?? []).map((p) => ({
+          title: p.title, description: p.description, timeframe: p.timeframe, category: p.category, completed: p.completed,
+        })),
+        universities: matches ?? [],
+      });
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   if (isLoading) return <LoadingView/>;
   if (error || !data) return <div className="grid min-h-screen place-items-center px-6 text-center"><div><h1 className="text-2xl font-bold">Your dashboard could not load.</h1><p className="mt-2 text-muted-foreground">Please refresh and try again.</p></div></div>;
@@ -60,8 +100,14 @@ function DashboardPage() {
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">Interactive career cards</p>
             <h2 className="mt-1 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">Ranked recommendations</h2>
           </div>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             {favCount > 0 && <span className="flex items-center gap-1"><BookmarkCheck className="size-3.5 text-primary" />{favCount} saved</span>}
+            <Button size="sm" variant="compassOutline" onClick={() => navigate({ to: "/roadmap" })}>
+              <Map className="size-4" /> View roadmap
+            </Button>
+            <Button size="sm" variant="compassOutline" onClick={downloadReport} disabled={downloading}>
+              {downloading ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />} PDF report
+            </Button>
             <Button size="sm" variant="compassOutline" disabled={compareIds.length < 2} onClick={() => setShowCompare(true)}>
               <GitCompare className="size-4" /> Compare ({compareIds.length}/3)
             </Button>

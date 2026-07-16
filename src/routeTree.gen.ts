@@ -15,6 +15,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedUniversityMatcherRouteImport } from './routes/_authenticated/university-matcher'
 import { Route as AuthenticatedStatementCoachRouteImport } from './routes/_authenticated/statement-coach'
+import { Route as AuthenticatedRoadmapRouteImport } from './routes/_authenticated/roadmap'
 import { Route as AuthenticatedRealityCheckerRouteImport } from './routes/_authenticated/reality-checker'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedFeedbackRouteImport } from './routes/_authenticated/feedback'
@@ -53,6 +54,11 @@ const AuthenticatedStatementCoachRoute =
     path: '/statement-coach',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedRoadmapRoute = AuthenticatedRoadmapRouteImport.update({
+  id: '/roadmap',
+  path: '/roadmap',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedRealityCheckerRoute =
   AuthenticatedRealityCheckerRouteImport.update({
     id: '/reality-checker',
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/feedback': typeof AuthenticatedFeedbackRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/reality-checker': typeof AuthenticatedRealityCheckerRoute
+  '/roadmap': typeof AuthenticatedRoadmapRoute
   '/statement-coach': typeof AuthenticatedStatementCoachRoute
   '/university-matcher': typeof AuthenticatedUniversityMatcherRoute
 }
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/feedback': typeof AuthenticatedFeedbackRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/reality-checker': typeof AuthenticatedRealityCheckerRoute
+  '/roadmap': typeof AuthenticatedRoadmapRoute
   '/statement-coach': typeof AuthenticatedStatementCoachRoute
   '/university-matcher': typeof AuthenticatedUniversityMatcherRoute
 }
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   '/_authenticated/feedback': typeof AuthenticatedFeedbackRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/reality-checker': typeof AuthenticatedRealityCheckerRoute
+  '/_authenticated/roadmap': typeof AuthenticatedRoadmapRoute
   '/_authenticated/statement-coach': typeof AuthenticatedStatementCoachRoute
   '/_authenticated/university-matcher': typeof AuthenticatedUniversityMatcherRoute
 }
@@ -138,6 +147,7 @@ export interface FileRouteTypes {
     | '/feedback'
     | '/profile'
     | '/reality-checker'
+    | '/roadmap'
     | '/statement-coach'
     | '/university-matcher'
   fileRoutesByTo: FileRoutesByTo
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
     | '/feedback'
     | '/profile'
     | '/reality-checker'
+    | '/roadmap'
     | '/statement-coach'
     | '/university-matcher'
   id:
@@ -165,6 +176,7 @@ export interface FileRouteTypes {
     | '/_authenticated/feedback'
     | '/_authenticated/profile'
     | '/_authenticated/reality-checker'
+    | '/_authenticated/roadmap'
     | '/_authenticated/statement-coach'
     | '/_authenticated/university-matcher'
   fileRoutesById: FileRoutesById
@@ -220,6 +232,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStatementCoachRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/roadmap': {
+      id: '/_authenticated/roadmap'
+      path: '/roadmap'
+      fullPath: '/roadmap'
+      preLoaderRoute: typeof AuthenticatedRoadmapRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/reality-checker': {
       id: '/_authenticated/reality-checker'
       path: '/reality-checker'
@@ -272,6 +291,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFeedbackRoute: typeof AuthenticatedFeedbackRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedRealityCheckerRoute: typeof AuthenticatedRealityCheckerRoute
+  AuthenticatedRoadmapRoute: typeof AuthenticatedRoadmapRoute
   AuthenticatedStatementCoachRoute: typeof AuthenticatedStatementCoachRoute
   AuthenticatedUniversityMatcherRoute: typeof AuthenticatedUniversityMatcherRoute
 }
@@ -283,6 +303,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFeedbackRoute: AuthenticatedFeedbackRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedRealityCheckerRoute: AuthenticatedRealityCheckerRoute,
+  AuthenticatedRoadmapRoute: AuthenticatedRoadmapRoute,
   AuthenticatedStatementCoachRoute: AuthenticatedStatementCoachRoute,
   AuthenticatedUniversityMatcherRoute: AuthenticatedUniversityMatcherRoute,
 }
